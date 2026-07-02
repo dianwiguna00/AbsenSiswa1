@@ -254,8 +254,6 @@ function setStatus(i,status){
 
 async function simpan(){
 
-    alert("⏳ Sedang menyimpan data...");
-
     try{
 
         const data = {
@@ -271,13 +269,7 @@ async function simpan(){
 
         const hasil = await res.text();
 
-        if(hasil==="OK"){
-            alert("✅ Data berhasil disimpan");
-        }
-
     }catch(err){
-
-        alert("❌ Gagal menyimpan");
 
     }
 
