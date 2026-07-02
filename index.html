@@ -254,51 +254,33 @@ function setStatus(i,status){
 
 async function simpan(){
 
+    alert("⏳ Sedang menyimpan data...");
+
     try{
 
         const data = {
-
-            kelas:
-            document.getElementById("kelas").value,
-
-            tanggal:
-            document.getElementById("tanggal").value,
-
-            absensi:
-            dataSiswa.map(s=>({
-
-                nis:s.nis,
-                nama:s.nama,
-                jk:s.jk,
-                status:s.status
-
-            }))
-
+            kelas: kelas.value,
+            tanggal: tanggal.value,
+            absensi: dataSiswa
         };
 
-        const res =
-        await fetch(API,{
+        const res = await fetch(API,{
             method:"POST",
             body:JSON.stringify(data)
         });
 
-        const hasil =
-        await res.text();
+        const hasil = await res.text();
 
         if(hasil==="OK"){
-
             alert("✅ Data berhasil disimpan");
-
-        }else{
-
-            alert("❌ Gagal menyimpan");
-
         }
 
     }catch(err){
 
-        alert("❌ Tidak dapat terhubung ke server");
+        alert("❌ Gagal menyimpan");
+
     }
+
 }
 
 window.onload = function(){
