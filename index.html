@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Absensi Online</title>
+
+<style>
+
+body{
+    font-family:Arial;
+    padding:20px;
+    background:#f3f5f8;
+}
+
+.toolbar{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:center;
+    margin-bottom:10px;
+}
+
+.toolbar select,
+.toolbar input{
+    height:48px;
+    font-size:20px;
+    padding:0 10px;
+}
+
+.toolbar button{
+    height:48px;
+    padding:0 15px;
+    font-size:16px;
+    white-space:nowrap;
+}
+
+button{
+    cursor:pointer;
+}
+
+table{
+    border-collapse:collapse;
+    width:auto;
+}
+
+th,
+td{
+    border:1px solid #ccc;
+    padding:4px 8px;
+    white-space:nowrap;
+}
+
+th{
+    background:#0d6efd;
+    color:white;
+}
+
+.nama{
+    text-align:left;
+    padding-left:15px;
+    width:auto;
+}
+
+.h{background:#198754;color:white;}
+.s{background:#ffc107;}
+.i{background:#0dcaf0;color:white;}
+.a{background:#dc3545;color:white;}
+.h,
+.s,
+.i,
+.a{
+    width:38px;
+    height:38px;
+    padding:0;
+    margin:0;
+    font-size:16px;
+    font-weight:bold;
+    border:none;
+    border-radius:6px;
+}
+.active{
+    outline:3px solid black;
+}
+
+.kelas-box{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(80px,1fr));
+    gap:8px;
+    margin:10px 0;
+}
+
+.kelas-box label{
+    border:1px solid #ddd;
+    border-radius:8px;
+    padding:10px;
+    background:white;
+}
+</style>
+</head>
+<body>
+
+<h2>ABSENSI SISWA</h2>
+<div class="toolbar">
+<select id="kelas" onchange="loadSiswa()">
+<option>7A</option>
+<option>7B</option>
+<option>7C</option>
+<option>7D</option>
+<option>7E</option>
+<option>7F</option>
+<option>7G</option>
+<option>7H</option>
+<option>7I</option>
+</select>
+
+<input type="date" id="tanggal">
+
+<button onclick="simpan()">
+Simpan
+</button>
+<select id="kelasDownload">
+    <option value="">Pilih Kelas</option>
+    <option value="7A">7A</option>
+    <option value="7B">7B</option>
+    <option value="7C">7C</option>
+    <option value="7D">7D</option>
+    <option value="7E">7E</option>
+    <option value="7F">7F</option>
+    <option value="7G">7G</option>
+    <option value="7H">7H</option>
+    <option value="7I">7I</option>
+    <option value="SEMUA">SEMUA KELAS</option>
+</select>
+
+<button onclick="downloadCSV()">
+📥 Download
+</button>
+</div>
+
+<table>
+
+<thead>
+<tr>
+<th>No</th>
+<th>NIS</th>
+<th>Nama</th>
+<th>L/P</th>
+<th>H</th>
+<th>S</th>
+<th>I</th>
+<th>A</th>
+</tr>
+</thead>
+
+<tbody id="tbody"></tbody>
+
+</table>
+
+<script>
+
+const API = "https://script.google.com/macros/s/AKfycbwSZGx3qx_qHTSQIALCPR3o5YnAreNEM05Ujb8xHxdjddA9xqK1DgoWc_h98ca2qZOK/exec";
+
+let dataSiswa = [];
+
+async function loadSiswa(){
+
+    try{
+
+        const kelas =
+        document.getElementById("kelas").value;
+
+        const res =
+        await fetch(API + "?kelas=" + kelas);
+
+        dataSiswa =
+        await res.json();
+
+        dataSiswa.forEach(s=>{
+            s.status = "H";
+        });
+
+        render();
+
+    }catch(err){
+
+        alert("Gagal mengambil data siswa");
+
+    }
+}
+
+function render(){
+
+    let html = "";
+
+    dataSiswa.forEach((s,i)=>{
+
+        html += `
+        <tr>
+
+        <td>${s.no}</td>
+
+        <td>${s.nis}</td>
+
+        <td class="nama">${s.nama}</td>
+
+        <td>${s.jk}</td>
+
+        <td>
+        <button
+        class="h ${s.status==='H'?'active':''}"
+        onclick="setStatus(${i},'H')">
+        H
+        </button>
+        </td>
+
+        <td>
+        <button
+        class="s ${s.status==='S'?'active':''}"
+        onclick="setStatus(${i},'S')">
+        S
+        </button>
+        </td>
+
+        <td>
+        <button
+        class="i ${s.status==='I'?'active':''}"
+        onclick="setStatus(${i},'I')">
+        I
+        </button>
+        </td>
+
+        <td>
+        <button
+        class="a ${s.status==='A'?'active':''}"
+        onclick="setStatus(${i},'A')">
+        A
+        </button>
+        </td>
+
+        </tr>
+        `;
+    });
+
+    document.getElementById("tbody").innerHTML = html;
+}
+
+function setStatus(i,status){
+
+    dataSiswa[i].status = status;
+
+    render();
+}
+
+async function simpan(){
+
+    try{
+
+        const data = {
+
+            kelas:
+            document.getElementById("kelas").value,
+
+            tanggal:
+            document.getElementById("tanggal").value,
+
+            absensi:
+            dataSiswa.map(s=>({
+
+                nis:s.nis,
+                nama:s.nama,
+                jk:s.jk,
+                status:s.status
+
+            }))
+
+        };
+
+        const res =
+        await fetch(API,{
+            method:"POST",
+            body:JSON.stringify(data)
+        });
+
+        const hasil =
+        await res.text();
+
+        if(hasil==="OK"){
+
+            alert("✅ Data berhasil disimpan");
+
+        }else{
+
+            alert("❌ Gagal menyimpan");
+
+        }
+
+    }catch(err){
+
+        alert("❌ Tidak dapat terhubung ke server");
+    }
+}
+
+window.onload = function(){
+
+    document.getElementById("tanggal").value =
+    new Date().toISOString().split("T")[0];
+
+    loadSiswa();
+}
+
+// ================= DOWNLOAD =================
+async function downloadCSV(){
+
+    let kelas =
+    document.getElementById(
+        "kelasDownload"
+    ).value;
+
+    if(!kelas){
+
+        alert(
+            "Pilih kelas terlebih dahulu"
+        );
+
+        return;
+    }
+
+    try{
+
+        let response =
+        await fetch(
+            API + "?rekap=" + kelas
+        );
+
+        let data =
+        await response.json();
+
+        let csv = "";
+
+        data.forEach(row=>{
+
+            csv +=
+            row.join(";") + "\n";
+
+        });
+
+        Android.downloadCSV(csv);
+
+    }catch(err){
+
+        alert(
+            "Gagal mengunduh rekap"
+        );
+
+    }
+
+}
+
+
+
+</script>
+
+</body>
+</html>
