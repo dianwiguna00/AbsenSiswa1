@@ -258,11 +258,6 @@ function setStatus(i,status){
 
 async function simpan(){
 
-    let pesan =
-    document.getElementById("pesan");
-
-    pesan.innerHTML = "⏳ Menyimpan...";
-
     try{
 
         const data = {
@@ -278,19 +273,7 @@ async function simpan(){
 
         await res.text();
 
-        pesan.innerHTML =
-        "✅ Data berhasil disimpan";
-
-        setTimeout(()=>{
-            pesan.innerHTML = "";
-        },3000);
-
-    }catch(err){
-
-        pesan.innerHTML =
-        "❌ Gagal menyimpan";
-
-    }
+    }catch(err){}
 
 }
 
