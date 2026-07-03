@@ -186,7 +186,7 @@ async function loadSiswa(){
 
     }catch(err){
 
-        alert("Gagal mengambil data siswa");
+        Android.showToast("Gagal...");
 
     }
 }
@@ -293,9 +293,7 @@ async function downloadCSV(){
 
     if(!kelas){
 
-        alert(
-            "Pilih kelas terlebih dahulu"
-        );
+        Android.showToast("Pilih kelas dulu");
 
         return;
     }
@@ -323,9 +321,7 @@ async function downloadCSV(){
 
     }catch(err){
 
-        alert(
-            "Gagal mengunduh rekap"
-        );
+        Android.showToast("Gagal...");
 
     }
 
