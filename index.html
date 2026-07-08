@@ -39,6 +39,13 @@ button{
     cursor:pointer;
 }
 
+/* Container scroll */
+.table-container{
+    overflow:auto;
+    max-width:100%;
+    max-height:80vh;
+}
+
 table{
     border-collapse:collapse;
     width:auto;
@@ -51,9 +58,13 @@ td{
     white-space:nowrap;
 }
 
+/* Header tetap di atas */
 th{
     background:#0d6efd;
     color:white;
+    position:sticky;
+    top:0;
+    z-index:10;
 }
 
 .nama{
@@ -63,10 +74,43 @@ th{
     font-size:20px;
 }
 
-.h{background:#198754;color:white;}
-.s{background:#ffc107;}
-.i{background:#0dcaf0;color:white;}
-.a{background:#dc3545;color:white;}
+/* Kolom No tetap di kiri */
+.sticky-no{
+    position:sticky;
+    left:0;
+    background:white;
+    z-index:5;
+}
+
+/* Titik pertemuan header dan kolom No */
+th.sticky-no{
+    position:sticky;
+    left:0;
+    top:0;
+    background:#0d6efd;
+    color:white;
+    z-index:20;
+}
+
+.h{
+    background:#198754;
+    color:white;
+}
+
+.s{
+    background:#ffc107;
+}
+
+.i{
+    background:#0dcaf0;
+    color:white;
+}
+
+.a{
+    background:#dc3545;
+    color:white;
+}
+
 .h,
 .s,
 .i,
@@ -80,6 +124,7 @@ th{
     border:none;
     border-radius:6px;
 }
+
 .active{
     outline:3px solid black;
 }
@@ -139,12 +184,13 @@ Simpan
 📥 Download
 </button>
 </div>
-
+<div style="overflow:auto">
+<div class="table-container">
 <table>
 
 <thead>
 <tr>
-<th>No</th>
+<th class="sticky-no">No</th>
 <th>NIS</th>
 <th>Nama</th>
 <th>L/P</th>
@@ -158,6 +204,8 @@ Simpan
 <tbody id="tbody"></tbody>
 
 </table>
+</div>
+</div>
 
 <script>
 
@@ -186,7 +234,7 @@ async function loadSiswa(){
 
     }catch(err){
 
-        Android.showToast("Gagal...");
+        alert("Gagal mengambil data siswa");
 
     }
 }
@@ -200,7 +248,7 @@ function render(){
         html += `
         <tr>
 
-        <td>${s.no}</td>
+        <td class="sticky-no">${s.no}</td>
 
         <td>${s.nis}</td>
 
@@ -293,7 +341,9 @@ async function downloadCSV(){
 
     if(!kelas){
 
-        Android.showToast("Pilih kelas dulu");
+        alert(
+            "Pilih kelas terlebih dahulu"
+        );
 
         return;
     }
@@ -321,7 +371,9 @@ async function downloadCSV(){
 
     }catch(err){
 
-        Android.showToast("Gagal...");
+        alert(
+            "Gagal mengunduh rekap"
+        );
 
     }
 
